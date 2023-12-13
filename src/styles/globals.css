@@ -10,6 +10,9 @@ body , * {
     color:white;
 }
 
+.text-center {
+  text-align: center;
+}
 .success-btn {
     background:#24a0ed;
 
@@ -72,9 +75,39 @@ body , * {
   border-color:#fff;
 }
 
+@media screen and (max-width: 768px) {
+  #invoice-form tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ccc; /* Optional: Add borders between rows */
+  }
 
+  #invoice-form tr td {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+  }
 
+  #invoice-form th {
+    display: none; /* Hide table headers on small screens */
+  }
 
+  /* Adjust specific columns to span full width on smaller screens */
+  #invoice-form tr:nth-child(odd) td,
+  #invoice-form tr:nth-child(odd) td input,
+  #invoice-form tr:nth-child(odd) td select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+#table{
+  padding: 40px;
+  overflow-x: scroll;
+}
 
 #action-buttons {
     width:80%;
@@ -96,14 +129,3 @@ body , * {
     border:2px solid #fff;
 }
 
-@media (max-width: 767px) {
-}
-
-/* Tablet styles */
-
-@media (min-width: 768px) and (max-width: 1023px) {
-}
-
-/* Desktop styles */
-@media (min-width: 1024px) {
-}

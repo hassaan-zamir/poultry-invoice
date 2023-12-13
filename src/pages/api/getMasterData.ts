@@ -26,13 +26,15 @@ export default async function handler(
       }
     });
 
+    const brokers = await prisma.brokers.findMany();
+
     const formattedSheds = sheds.map((shed) => ({
       id: shed.id,
       name: shed.name,
       houses: shed.house.map((h) => h.house_no)
     }));
 
-    res.status(200).json({ sheds: formattedSheds, invoices });
+    res.status(200).json({ sheds: formattedSheds, invoices, brokers });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

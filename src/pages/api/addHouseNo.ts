@@ -11,9 +11,9 @@ export default async function handler(
     const { house_no, shed_no } = req.body;
 
     try {
-      const shed = await prisma.sheds.findUnique({
+      const shed = await prisma.sheds.findFirst({
         where: {
-          id: parseInt(shed_no)
+          name: shed_no
         }
       });
 
@@ -24,7 +24,7 @@ export default async function handler(
 
       const newHouse = await prisma.house.create({
         data: {
-          house_no: parseInt(house_no), 
+          house_no: house_no, 
           sheds: {
             connect: {
               id: shed.id 

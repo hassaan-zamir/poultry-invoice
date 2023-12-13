@@ -1,6 +1,6 @@
 import { ShedsMasterDataType } from "@/pages";
 import axios from "axios";
-import { useState } from "react";
+
 
 interface PropTypes {
   sheds: ShedsMasterDataType[];
@@ -23,7 +23,7 @@ const Sheds = ({ sheds, shedNo, setShedNo, setSheds }: PropTypes) => {
         alert("Could not add. Please try again");
       }
     } catch (e) {
-      console.log("Error while adding new house", e);
+      console.log("Error while adding new shed", e);
       alert("Could not add. Please try again");
     }
   };
@@ -43,7 +43,7 @@ const Sheds = ({ sheds, shedNo, setShedNo, setSheds }: PropTypes) => {
             defaultValue={shedNo}
           >
             {sheds.map((shed, i) => (
-              <option key={i} value={shed.id}>
+              <option key={i} value={shed.name}>
                 {shed.name}
               </option>
             ))}

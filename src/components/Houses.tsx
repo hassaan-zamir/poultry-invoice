@@ -17,7 +17,7 @@ const Houses = ({
   setSheds,
 }: PropTypes) => {
   let houses: string[] = [];
-  const foundShed = sheds.find((shed) => shed.id == shed_selected);
+  const foundShed = sheds.find((shed) => shed.name == shed_selected);
   if (foundShed) {
     houses = foundShed.houses;
   }
