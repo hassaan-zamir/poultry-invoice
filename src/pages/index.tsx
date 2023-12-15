@@ -313,21 +313,15 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     if (!todaysRate || !addLess) {
       return 0;
     }
-    return todaysRate + addLess;
+    return Number(todaysRate) + Number(addLess);
   };
 
   const getTotalAdvance = (): number => {
-    if (!cash || !online) {
-      return 0;
-    }
-    return cash + online;
+    return Number(cash) + Number(online);
   };
 
   const getNetWeight = (): number => {
-    if (!secondWeight || !firstWeight) {
-      return 0;
-    }
-    return secondWeight - firstWeight;
+    return Number(secondWeight) - Number(firstWeight);
   };
 
   const getTotalAmount = (): number => {
@@ -339,19 +333,18 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   };
 
   const addInvoice = async () => {
-    if (!firstWeight) {
-      alert("First weight is not valid");
-    } else if (!secondWeight) {
-      alert("Second Weight is not valid");
-    } else if (secondWeight <= firstWeight) {
-      alert("Second weight should be greater than first weight");
-    } else if (!todaysRate) {
-      alert("Invalid Todays Rate");
-    } else if (driverName.trim() == "") {
+    if (driverName.trim() == "") {
       alert("Driver name is required");
     } else if (vehicleNo.trim() == "") {
       alert("Vehicle no is required");
     } else if (confirm("Are you sure?")) {
+
+      if(firstWeight && secondWeight){
+        if(secondWeight <= firstWeight){
+          alert("Second weight should be greater than first weight");
+          return;
+        }
+      }
       try {
         const resp = await axios.post("/api/addInvoice", {
           vehicle_no: vehicleNo,
@@ -453,7 +446,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Today&apos;s rate</label>
                 <input
-                  type="number"
+                  type="text"
                   name="t_rate"
                   value={todaysRate ?? ""}
                   onChange={handleInputChange}
@@ -464,7 +457,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Rate Add/Less</label>
                 <input
-                  type="number"
+                  type="text"
                   name="add_less"
                   value={addLess ?? ""}
                   onChange={handleInputChange}
@@ -475,7 +468,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Final Rate</label>
                 <input
-                  type="number"
+                  type="text"
                   name="final_rate"
                   value={getFinalRate()}
                   disabled
@@ -540,7 +533,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Online</label>
                 <input
-                  type="number"
+                  type="text"
                   name="online"
                   value={online ?? ""}
                   onChange={handleInputChange}
@@ -551,7 +544,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Total Advance</label>
                 <input
-                  type="number"
+                  type="text"
                   name="total_advance"
                   disabled
                   value={getTotalAdvance()}
@@ -564,7 +557,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>First Weight</label>
                 <input
-                  type="number"
+                  type="text"
                   name="first_weight"
                   value={firstWeight ?? ""}
                   onChange={handleInputChange}
@@ -581,7 +574,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
                   Second Weight
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="second_weight"
                   value={secondWeight ?? ""}
                   onChange={handleInputChange}
@@ -592,7 +585,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Net Weight</label>
                 <input
-                  type="number"
+                  type="text"
                   name="net_weight"
                   disabled
                   value={getNetWeight()}
@@ -605,7 +598,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Total Amount</label>
                 <input
-                  type="number"
+                  type="text"
                   name="total_amount"
                   disabled
                   value={getTotalAmount()}
@@ -616,7 +609,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Balance</label>
                 <input
-                  type="number"
+                  type="text"
                   name="balance"
                   disabled
                   value={getBalance()}
@@ -638,7 +631,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
               <div className="form-group">
                 <label>Commission</label>
                 <input
-                  type="number"
+                  type="text"
                   name="commission"
                   value={commission ?? ""}
                   onChange={handleInputChange}
