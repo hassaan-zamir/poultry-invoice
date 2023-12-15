@@ -108,6 +108,10 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
       selector: (row: InvoiceType) => row.driver_name,
     },
     {
+      name: "Vehicle Number",
+      selector: (row: InvoiceType) => row.vehicle_no
+    },
+    {
       name: "Cash",
       selector: (row: InvoiceType) => row.cash,
     },
