@@ -82,23 +82,19 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   const [commission, setCommission] = useState<number | null>(null);
 
   const columns = [
+
     {
-      name: "ID",
-      selector: (row: InvoiceType) => row.id,
-    },
-    {
-      name: "Date",
-      selector: (row: InvoiceType) => row.date,
+      name: "Challan Number",
+      selector: (row: InvoiceType) => row.date+'/'+row.id,
     },
     {
       name: "Shed",
       selector: (row: InvoiceType) => row.shed,
     },
     {
-      name: "House",
-      selector: (row: InvoiceType) => row.house_no,
+      name: "Vehicle No",
+      selector: (row: InvoiceType) => row.vehicle_no,
     },
-
     {
       name: "Broker",
       selector: (row: InvoiceType) => row.broker_name,
@@ -108,24 +104,12 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
       selector: (row: InvoiceType) => row.driver_name,
     },
     {
-      name: "Vehicle Number",
-      selector: (row: InvoiceType) => row.vehicle_no
-    },
-    {
-      name: "Cash",
-      selector: (row: InvoiceType) => row.cash,
-    },
-    {
-      name: "Online",
-      selector: (row: InvoiceType) => row.online,
-    },
-    {
       name: "Commission",
       selector: (row: InvoiceType) => row.commission,
     },
     {
-      name: "Today's Rate",
-      selector: (row: InvoiceType) => row.todays_rate,
+      name: "Final Rate",
+      selector: (row: InvoiceType) => Number(row.todays_rate) + Number(row.add_less),
     },
     {
       name: "1st Wgt",
@@ -136,12 +120,20 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
       selector: (row: InvoiceType) => row.second_weight,
     },
     {
+      name: "Net Wgt",
+      selector: (row: InvoiceType) => Number(row.second_weight) - Number(row.first_weight),
+    },
+    {
+      name: "Advance",
+      selector: (row: InvoiceType) => Number(row.cash) + Number(row.online),
+    },
+    {
       name: "Status",
-      selector: (row: InvoiceType) => row.paid,
+      selector: (row: InvoiceType) => row.paid ? 'Paid' : 'Pending',
     },
   ];
 
-  const clearInputs = () => {
+  const clearInputs = async () => {
     setCash(null);
     setOnline(null);
     setVehicleNo("");
@@ -149,6 +141,21 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     setFirstWeight(null);
     setSecondWeight(null);
     setCommission(null);
+    await fetchAndSetChallanNo();
+
+  };
+
+  const fetchAndSetChallanNo = async () => {
+    const resp = await axios.post("/api/getChallanNo");
+    if (resp.data.challanNo) {
+      const currentDate = new Date();
+      const formattedDate = `${
+        currentDate.getMonth() + 1
+      }/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+      const fullChallanNo = formattedDate + "-" + resp.data.challanNo;
+
+      setChallanNo(fullChallanNo);
+    }
   };
 
   useEffect(() => {
@@ -239,16 +246,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
           setDate(defaultDate);
         }
 
-        const resp = await axios.post("/api/getChallanNo");
-        if (resp.data.challanNo) {
-          const currentDate = new Date();
-          const formattedDate = `${
-            currentDate.getMonth() + 1
-          }/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-          const fullChallanNo = formattedDate + "-" + resp.data.challanNo;
-
-          setChallanNo(fullChallanNo);
-        }
+        await fetchAndSetChallanNo();
       } catch (e) {
         console.log("Error while generating challan no", e);
       }
@@ -256,9 +254,6 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     })();
   }, [mutatedBrokers, mutatedSheds, shedNo]);
 
-  if (loading) {
-    return <Loading />;
-  }
 
   if (!challanNo) {
     return <p>Error generating challan no. Please try refreshing..</p>;
@@ -314,9 +309,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   };
 
   const getFinalRate = (): number => {
-    if (!todaysRate || !addLess) {
-      return 0;
-    }
+
     return Number(todaysRate) + Number(addLess);
   };
 
@@ -342,9 +335,8 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     } else if (vehicleNo.trim() == "") {
       alert("Vehicle no is required");
     } else if (confirm("Are you sure?")) {
-
-      if(firstWeight && secondWeight){
-        if(secondWeight <= firstWeight){
+      if (firstWeight && secondWeight) {
+        if (secondWeight <= firstWeight) {
           alert("Second weight should be greater than first weight");
           return;
         }
@@ -373,18 +365,8 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
           newInvoices.unshift(resp.data.invoice);
           setMutatedInvoices(newInvoices);
           forceUpdate(Math.random());
-          clearInputs();
           setLoading(true);
-          const resp2 = await axios.post("/api/getChallanNo");
-          if (resp2.data.challanNo) {
-            const currentDate = new Date();
-            const formattedDate = `${
-              currentDate.getMonth() + 1
-            }/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-            const fullChallanNo = formattedDate + "-" + resp2.data.challanNo;
-
-            setChallanNo(fullChallanNo);
-          }
+          await clearInputs();
           setLoading(false);
         }
       } catch (e) {
@@ -661,10 +643,18 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
         <button type="button" id="delete_invoice" className="danger-btn">
           Delete
         </button>
+        <button
+          type="button"
+          id="reset_invoice"
+          className="grey-btn"
+          onClick={() => clearInputs()}
+        >
+          Reset
+        </button>
       </section>
 
       <section id="table">
-        <DataTable key={n} columns={columns} data={mutatedInvoices} />
+        <DataTable  key={n} columns={columns} data={mutatedInvoices} theme='dark' pagination progressPending={loading} />
       </section>
     </>
   );

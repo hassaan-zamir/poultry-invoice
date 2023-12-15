@@ -10,6 +10,10 @@ body , * {
     color:white;
 }
 
+body {
+  margin-top:40px;
+}
+
 .text-center {
   text-align: center;
 }
@@ -23,6 +27,12 @@ body , * {
     background: #db5f12;
 
     color:white;
+}
+
+.grey-btn {
+  background: #ccc;
+
+  color:white;
 }
 
 .info-btn {
@@ -105,8 +115,10 @@ body , * {
 }
 
 #table{
-  padding: 40px;
-  overflow-x: scroll;
+  margin-top: 80px;
+  width:90%;
+  margin-right:auto;
+  margin-left:auto;
 }
 
 #action-buttons {
@@ -129,3 +141,6 @@ body , * {
     border:2px solid #fff;
 }
 
+#table div {
+  overflow:visible;
+}
