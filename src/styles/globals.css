@@ -144,3 +144,20 @@ body {
 #table div {
   overflow:visible;
 }
+
+.challanNoCell {
+  text-decoration: underline;
+  color:#24a0ed;
+}
+
+.filterBox {
+  width:100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filterBox input {
+  padding:2px 4px;
+  width:300px;
+  height:30px;
+}

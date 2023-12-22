@@ -1,11 +1,11 @@
 import Head from "next/head";
 import { useState, useEffect, ChangeEvent } from "react";
-import Loading from "@/components/Loading";
 import axios from "axios";
 import Sheds from "@/components/Sheds";
 import Houses from "@/components/Houses";
 import DataTable from "react-data-table-component";
 import Brokers from "@/components/Brokers";
+
 
 export async function getServerSideProps() {
   const res = await axios.post(
@@ -56,6 +56,10 @@ interface PropTypes {
 export default function Home({ sheds, invoices, brokers }: PropTypes) {
   const [mutatedInvoices, setMutatedInvoices] =
     useState<InvoiceType[]>(invoices);
+
+  const [searchText, setSearchText] = useState<string>("");
+  const [filteredInvoices, setFilteredInvoices] = useState(mutatedInvoices);
+
   const [n, forceUpdate] = useState<number>();
 
   const [mutatedSheds, setMutatedSheds] =
@@ -64,7 +68,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   const [mutatedBrokers, setMutatedBrokers] = useState<BrokerType[]>(brokers);
 
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [rowid, setRowId] = useState<number | null>(null);
   const [challanNo, setChallanNo] = useState<string | null>(null);
   const [date, setDate] = useState<string>("");
   const [shedNo, setShedNo] = useState<string>("");
@@ -81,11 +85,42 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   const [paid, setPaid] = useState<boolean>(false);
   const [commission, setCommission] = useState<number | null>(null);
 
-  const columns = [
+  const handleChallanClick = (row: InvoiceType) => {
+    const date = new Date(row.date);
+    setChallanNo(
+      `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}-${row.id}`
+    );
+    setRowId(row.id);
+    setDate(date.toISOString().substr(0, 10));
+    setShedNo(row.shed);
+    setHouseNo(row.house_no);
+    setTodaysRate(row.todays_rate);
+    setBrokerName(row.broker_name);
+    setAddLess(row.add_less);
+    setVehicleNo(row.vehicle_no);
+    setDriverName(row.driver_name);
+    setCash(row.cash);
+    setOnline(row.online);
+    setFirstWeight(row.first_weight);
+    setSecondWeight(row.second_weight);
+    setPaid(row.paid ? true : false);
+    setCommission(row.commission);
+  };
 
+  const columns = [
     {
       name: "Challan Number",
-      selector: (row: InvoiceType) => row.date+'/'+row.id,
+      selector: (row: InvoiceType) => row.date + "/" + row.id,
+      cell: (row: InvoiceType) => {
+        return (
+          <div
+            onClick={() => handleChallanClick(row)}
+            className="challanNoCell"
+          >
+            {row.date}/{row.id}
+          </div>
+        );
+      },
     },
     {
       name: "Shed",
@@ -109,7 +144,8 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     },
     {
       name: "Final Rate",
-      selector: (row: InvoiceType) => Number(row.todays_rate) + Number(row.add_less),
+      selector: (row: InvoiceType) =>
+        Number(row.todays_rate) + Number(row.add_less),
     },
     {
       name: "1st Wgt",
@@ -121,7 +157,8 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     },
     {
       name: "Net Wgt",
-      selector: (row: InvoiceType) => Number(row.second_weight) - Number(row.first_weight),
+      selector: (row: InvoiceType) =>
+        Number(row.second_weight) - Number(row.first_weight),
     },
     {
       name: "Advance",
@@ -129,7 +166,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     },
     {
       name: "Status",
-      selector: (row: InvoiceType) => row.paid ? 'Paid' : 'Pending',
+      selector: (row: InvoiceType) => (row.paid ? "Paid" : "Pending"),
     },
   ];
 
@@ -141,8 +178,8 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     setFirstWeight(null);
     setSecondWeight(null);
     setCommission(null);
+    setRowId(null);
     await fetchAndSetChallanNo();
-
   };
 
   const fetchAndSetChallanNo = async () => {
@@ -157,6 +194,26 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
       setChallanNo(fullChallanNo);
     }
   };
+
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+
+    const filtered = mutatedInvoices.filter(
+      (invoice) =>
+        invoice.driver_name.toLowerCase().includes(text.toLowerCase()) ||
+        invoice.broker_name.toLowerCase().includes(text.toLowerCase()) ||
+        invoice.vehicle_no.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredInvoices(filtered);
+  };
+
+  useEffect(() => {
+    setFilteredInvoices(mutatedInvoices);
+  }, [mutatedInvoices]);
+
+  useEffect(() => {
+    fetchAndSetChallanNo();
+  }, []);
 
   useEffect(() => {
     const getDefaultBroker = (): string => {
@@ -245,15 +302,12 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
 
           setDate(defaultDate);
         }
-
-        await fetchAndSetChallanNo();
       } catch (e) {
         console.log("Error while generating challan no", e);
       }
       setLoading(false);
     })();
   }, [mutatedBrokers, mutatedSheds, shedNo]);
-
 
   if (!challanNo) {
     return <p>Error generating challan no. Please try refreshing..</p>;
@@ -309,7 +363,6 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   };
 
   const getFinalRate = (): number => {
-
     return Number(todaysRate) + Number(addLess);
   };
 
@@ -330,6 +383,11 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
   };
 
   const addInvoice = async () => {
+    if (rowid) {
+      alert("Duplicated challan No. Please use update or reset the form");
+      return;
+    }
+
     if (driverName.trim() == "") {
       alert("Driver name is required");
     } else if (vehicleNo.trim() == "") {
@@ -372,6 +430,93 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
       } catch (e) {
         alert("Could not create invoice. Please try again");
         console.log("Error while adding new invoice", e);
+      }
+    }
+  };
+
+  const deleteInvoice = async () => {
+    if (!rowid) {
+      alert(
+        "Please select a record by clicking on challan no in the table below"
+      );
+      return;
+    }
+
+    if (confirm("Are you sure?")) {
+
+      try {
+        const resp = await axios.post("/api/deleteInvoice", {
+          id: rowid,
+        });
+
+        if (resp.data.invoice_id) {
+          alert("Invoice deleted successfully");
+          const updatedInvoices = mutatedInvoices.filter((invoice) => invoice.id !== resp.data.invoice_id);
+          setMutatedInvoices(updatedInvoices);
+          forceUpdate(Math.random());
+          setLoading(true);
+          await clearInputs();
+          setLoading(false);
+        }
+      } catch (e) {
+        alert("Could not delete invoice. Please try again");
+        console.log("Error while deleteing an invoice", e);
+      }
+    }
+  };
+
+  const updateInvoice = async () => {
+    if (!rowid) {
+      alert(
+        "Please select a record by clicking on challan number in table below"
+      );
+      return;
+    }
+
+    if (driverName.trim() == "") {
+      alert("Driver name is required");
+    } else if (vehicleNo.trim() == "") {
+      alert("Vehicle no is required");
+    } else if (confirm("Are you sure?")) {
+      if (firstWeight && secondWeight) {
+        if (secondWeight <= firstWeight) {
+          alert("Second weight should be greater than first weight");
+          return;
+        }
+      }
+      try {
+        const resp = await axios.put("/api/updateInvoice", {
+          id: rowid,
+          vehicle_no: vehicleNo,
+          date,
+          shed: shedNo,
+          house_no: houseNo,
+          broker_name: brokerName,
+          driver_name: driverName,
+          first_weight: firstWeight,
+          second_weight: secondWeight,
+          todays_rate: todaysRate,
+          add_less: addLess ?? 0,
+          cash: cash ?? 0,
+          online: online ?? 0,
+          commission: commission ?? 0,
+          paid: paid ? 1 : 0,
+        });
+
+        if (resp.data.invoice) {
+          alert("Invoice Updated successfully");
+          const updatedInvoices = mutatedInvoices.map((invoice) =>
+            invoice.id === resp.data.invoice.id ? resp.data.invoice : invoice
+          );
+          setMutatedInvoices(updatedInvoices);
+          forceUpdate(Math.random());
+          setLoading(true);
+          await clearInputs();
+          setLoading(false);
+        }
+      } catch (e) {
+        alert("Could not update invoice. Please try again");
+        console.log("Error while updating an invoice", e);
       }
     }
   };
@@ -470,15 +615,6 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
                 setBroker={setBrokerName}
                 setBrokers={setMutatedBrokers}
               />
-              {/* <div className="form-group">
-                <label>Broker Name</label>
-                <input
-                  type="text"
-                  name="broker_name"
-                  value={brokerName}
-                  onChange={handleInputChange}
-                />
-              </div> */}
             </td>
             <td colSpan={2}>
               <div className="form-group">
@@ -637,10 +773,20 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
         >
           Create
         </button>
-        <button type="button" id="update_invoice" className="info-btn">
+        <button
+          type="button"
+          id="update_invoice"
+          className="info-btn"
+          onClick={updateInvoice}
+        >
           Update
         </button>
-        <button type="button" id="delete_invoice" className="danger-btn">
+        <button
+          type="button"
+          id="delete_invoice"
+          className="danger-btn"
+          onClick={deleteInvoice}
+        >
           Delete
         </button>
         <button
@@ -654,7 +800,22 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
       </section>
 
       <section id="table">
-        <DataTable  key={n} columns={columns} data={mutatedInvoices} theme='dark' pagination progressPending={loading} />
+        <div className="filterBox">
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="Search by Driver or Broker or Vehicle"
+          />
+        </div>
+        <DataTable
+          key={n}
+          columns={columns}
+          data={filteredInvoices}
+          theme="dark"
+          pagination
+          progressPending={loading}
+        />
       </section>
     </>
   );
