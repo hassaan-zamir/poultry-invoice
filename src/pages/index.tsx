@@ -6,7 +6,6 @@ import Houses from "@/components/Houses";
 import DataTable from "react-data-table-component";
 import Brokers from "@/components/Brokers";
 
-
 export async function getServerSideProps() {
   const res = await axios.post(
     process.env.NEXT_PUBLIC_BASE_URL + "/api/getMasterData"
@@ -443,21 +442,20 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     }
 
     if (confirm("Are you sure?")) {
-
       try {
         const resp = await axios.post("/api/deleteInvoice", {
           id: rowid,
         });
 
-        if (resp.data.invoice_id) {
-          alert("Invoice deleted successfully");
-          const updatedInvoices = mutatedInvoices.filter((invoice) => invoice.id !== resp.data.invoice_id);
-          setMutatedInvoices(updatedInvoices);
-          forceUpdate(Math.random());
-          setLoading(true);
-          await clearInputs();
-          setLoading(false);
-        }
+        alert("Invoice deleted successfully");
+        const updatedInvoices = mutatedInvoices.filter(
+          (invoice) => invoice.id !== rowid
+        );
+        setMutatedInvoices(updatedInvoices);
+        forceUpdate(Math.random());
+        setLoading(true);
+        await clearInputs();
+        setLoading(false);
       } catch (e) {
         alert("Could not delete invoice. Please try again");
         console.log("Error while deleteing an invoice", e);
