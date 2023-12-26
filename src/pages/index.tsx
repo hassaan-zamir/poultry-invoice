@@ -810,7 +810,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
         <Link
           target="_blank"
           className="btn info-btn"
-          href={`/advance-slip/${rowid}`}
+          href={`/credit-slip/${rowid}`}
         >
           Credit Slip Print
         </Link>

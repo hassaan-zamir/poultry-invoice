@@ -7,7 +7,7 @@ import Head from "next/head";
 import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
 
-export default function AdvanceSlip() {
+export default function CreditSlip() {
   const router = useRouter();
   const componentRef = useRef(null);
 
@@ -70,7 +70,7 @@ export default function AdvanceSlip() {
             </td>
           </tr>
           <tr>
-            <th colSpan={4}>Advance Slip</th>
+            <th colSpan={4}>Credit Slip</th>
           </tr>
           <tr>
             <td colSpan={4}>Contact: 0317825800 </td>
@@ -122,15 +122,85 @@ export default function AdvanceSlip() {
 
           <tr>
             <td colSpan={2}>
+              <b>1st Wgt</b>
+              <br />
+              <span>{invoice.first_weight}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>2nd Wgt</b>
+              <br />
+              <span>{invoice.second_weight}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}>
+              <b>Net wgt</b>
+              <br />
+              <span>{invoice.second_weight - invoice.first_weight}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Rate</b>
+              <br />
+              <span>{invoice.todays_rate + invoice.add_less}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}>
+              <b>Total Amt</b>
+              <br />
+              <span>{(invoice.todays_rate + invoice.add_less)*(invoice.second_weight - invoice.first_weight)}</span>
+            </td>
+
+            <td colSpan={2}>
               <b>Cash</b>
               <br />
               <span>{invoice.cash}</span>
             </td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}>
+              <b>Total Advance</b>
+              <br />
+              <span>{(invoice.cash + invoice.online)}</span>
+            </td>
 
             <td colSpan={2}>
-              <b>Broker</b>
+              <b>Online</b>
               <br />
               <span>{invoice.online}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}>
+              <b>Balance</b>
+              <br />
+              <span>{((invoice.todays_rate + invoice.add_less)*(invoice.second_weight - invoice.first_weight))-(invoice.cash + invoice.online)}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Commission</b>
+              <br />
+              <span>{invoice.commission}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}>
+              <b>Balance</b>
+              <br />
+              <span>{((invoice.todays_rate + invoice.add_less)*(invoice.second_weight - invoice.first_weight))-(invoice.cash + invoice.online)}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Commission</b>
+              <br />
+              <span>{invoice.commission}</span>
             </td>
           </tr>
           <tr>
@@ -139,11 +209,19 @@ export default function AdvanceSlip() {
 
           <tr>
             <td colSpan={4}>
-              <b>Total Advance</b>
+              <b>Credit Amt</b>
               <br />
-              <span>{invoice.cash + invoice.online}</span>
+              <span>{((invoice.todays_rate + invoice.add_less)*(invoice.second_weight - invoice.first_weight))-(invoice.cash + invoice.online) + invoice.commission}</span>
             </td>
+
+         
           </tr>
+
+          
+        
+
+     
+   
 
           <tr>
             <td>&nbsp;</td>
