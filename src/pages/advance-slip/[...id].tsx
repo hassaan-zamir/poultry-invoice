@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-css-tags */
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { InvoiceType } from "..";
+import Head from "next/head";
 
 export default function AdvanceSlip() {
   const router = useRouter();
@@ -19,7 +21,6 @@ export default function AdvanceSlip() {
     try {
       const resp = await axios.post("/api/getInvoice", { id: id });
       setInvoice(resp.data.invoice);
-      window.print();
     } catch (e) {
       console.log(e);
     }
@@ -35,7 +36,10 @@ export default function AdvanceSlip() {
   
 
   return <>
-    <table cellPadding={20} cellSpacing={20} border={1} style={{ textAlign: 'center'}}>
+    <Head>
+      <link rel="stylesheet" type="text/css" href="/posPrint.css" />
+    </Head>
+    <table  style={{ textAlign: 'center'}}>
       <tr>
         <th colSpan={4}>Golden Poulty Farms</th>
       </tr>

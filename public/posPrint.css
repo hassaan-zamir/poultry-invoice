@@ -1,0 +1,27 @@
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+
+@media print {
+
+  table {
+    visibility: visible;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+
+  table, th, td {
+    padding: 5px;
+  }
+
+  th {
+    background-color: #f2f2f2; /* Header background color */
+    font-weight: bold;
+  }
+
+}
