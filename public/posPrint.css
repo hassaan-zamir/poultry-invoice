@@ -12,7 +12,10 @@ html {
     visibility: visible;
     width: 100%;
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight:900;
+    color:#000;
+
   }
 
   table, th, td {
