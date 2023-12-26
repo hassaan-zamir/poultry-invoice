@@ -17,7 +17,8 @@
     "react-data-table-component": "^7.5.4",
     "react-dom": "^18",
     "react-persistent-state": "^1.1.13",
-    "react-thermal-printer": "^0.17.0"
+    "react-thermal-printer": "^0.17.0",
+    "react-to-print": "^2.14.15"
   },
   "devDependencies": {
     "@types/node": "^20",

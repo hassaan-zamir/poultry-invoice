@@ -1,14 +1,20 @@
 /* eslint-disable @next/next/no-css-tags */
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InvoiceType } from "..";
 import Head from "next/head";
+import { useReactToPrint } from 'react-to-print';
 
 export default function AdvanceSlip() {
   const router = useRouter();
+  const componentRef = useRef(null);
 
   const [invoice , setInvoice] = useState<InvoiceType | null>(null);
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   const getChallanNo = (d:string, id: number):string => {
     const date = new Date(d);
@@ -36,10 +42,7 @@ export default function AdvanceSlip() {
   
 
   return <>
-    <Head>
-      <link rel="stylesheet" type="text/css" href="/posPrint.css" />
-    </Head>
-    <table  style={{ textAlign: 'center'}}>
+    <table  ref={componentRef} style={{ textAlign: 'center'}}>
       <tr>
         <th colSpan={4}>Golden Poulty Farms</th>
       </tr>
@@ -79,5 +82,6 @@ export default function AdvanceSlip() {
         <td colSpan={2}>{invoice.cash + invoice.online}</td>
       </tr>
     </table>
+    <button onClick={handlePrint}>Print this out!</button>
   </>
 }
