@@ -5,6 +5,7 @@ import Sheds from "@/components/Sheds";
 import Houses from "@/components/Houses";
 import DataTable from "react-data-table-component";
 import Brokers from "@/components/Brokers";
+import Link from "next/link";
 
 export async function getServerSideProps() {
   const res = await axios.post(
@@ -519,6 +520,7 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
     }
   };
 
+
   return (
     <>
       <Head>
@@ -796,6 +798,23 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
           Reset
         </button>
       </section>
+
+      {rowid && <section id="action-buttons">
+        <Link
+          target="_blank"
+          className="btn success-btn"
+          href={`/advance-slip/${rowid}`}
+        >
+          Advance Slip Print
+        </Link>
+        <Link
+          target="_blank"
+          className="btn info-btn"
+          href={`/advance-slip/${rowid}`}
+        >
+          Credit Slip Print
+        </Link>
+      </section>}
 
       <section id="table">
         <div className="filterBox">

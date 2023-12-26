@@ -129,9 +129,10 @@ body {
     justify-content: center;
     gap:30px;
     align-items: center;
+    margin-top:25px;
 }
 
-#action-buttons button {
+#action-buttons button , .btn{
     width:200px;
     height:35px;
     border-radius:5px;
@@ -139,6 +140,11 @@ body {
     font-weight:800;
     text-shadow:1px 1px 1px #000;
     border:2px solid #fff;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #table div {
