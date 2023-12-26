@@ -49,14 +49,20 @@ export default function AdvanceSlip() {
       <table
         ref={componentRef}
         style={{ textAlign: "center", background: "#fff", color: "#000", border:'none' }}
-        border={1} cellSpacing={10}
+        border={0} cellSpacing={10}
       >
         <tbody>
           <tr>
-            <th colSpan={4}>Golden Poulty Farms</th>
+            <th colSpan={4} style={{ fontSize: '22px !important'}}>GOLDEN POULTRY FARMS</th>
           </tr>
           <tr>
-            <td colSpan={4}>Contact: 0317825800 , 0317825900</td>
+            <th colSpan={4} >Advance Slip</th>
+          </tr>
+          <tr>
+            <td colSpan={4}>Contact: 0317825800 </td>
+          </tr>
+          <tr>
+            <td colSpan={4}>0317825900</td>
           </tr>
           <tr>
             <th>Date</th>
