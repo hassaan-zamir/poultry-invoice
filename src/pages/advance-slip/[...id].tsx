@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { InvoiceType } from "..";
 import Head from "next/head";
 import { useReactToPrint } from "react-to-print";
+import Image from "next/image";
 
 export default function AdvanceSlip() {
   const router = useRouter();
@@ -44,19 +45,32 @@ export default function AdvanceSlip() {
   return (
     <>
       <Head>
-        <link rel="stylesheet" href="/posPrint.css"/>
+        <link rel="stylesheet" href="/posPrint.css" />
       </Head>
       <table
         ref={componentRef}
-        style={{ textAlign: "center", background: "#fff", color: "#000", border:'none' }}
-        border={0} cellSpacing={10}
+        style={{
+          textAlign: "center",
+          background: "#fff",
+          color: "#000",
+          border: "none",
+        }}
+        border={0}
+        cellSpacing={10}
       >
         <tbody>
           <tr>
-            <th colSpan={4} style={{ fontSize: '22px !important'}}>GOLDEN POULTRY FARMS</th>
+            <th colSpan={4}>
+              <h2>GOLDEN POULTRY FARMS</h2>
+            </th>
           </tr>
           <tr>
-            <th colSpan={4} >Advance Slip</th>
+            <td colSpan={4}>
+              <Image alt="hen" width={40} height={40} src="/hen.jpeg" />
+            </td>
+          </tr>
+          <tr>
+            <th colSpan={4}>Advance Slip</th>
           </tr>
           <tr>
             <td colSpan={4}>Contact: 0317825800 </td>
@@ -65,36 +79,77 @@ export default function AdvanceSlip() {
             <td colSpan={4}>0317825900</td>
           </tr>
           <tr>
-            <th>Date</th>
-            <td>{new Date(invoice.date).toISOString().substr(0, 10)}</td>
-            <th>Challan#</th>
-            <td>{getChallanNo(invoice.date, invoice.id)}</td>
+            <td colSpan={2}>
+              <b>Date</b>
+              <br />
+              <span>{new Date(invoice.date).toISOString().substr(0, 10)}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Challan#</b>
+              <br />
+              <span>{getChallanNo(invoice.date, invoice.id)}</span>
+            </td>
           </tr>
 
           <tr>
-            <th>Shed</th>
-            <td>{invoice.shed}</td>
-            <th>Broker</th>
-            <td>{invoice.broker_name}</td>
+            <td colSpan={2}>
+              <b>Shed</b>
+              <br />
+              <span>{invoice.shed}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Broker</b>
+              <br />
+              <span>{invoice.broker_name}</span>
+            </td>
           </tr>
 
           <tr>
-            <th>Vehicle</th>
-            <td>{invoice.vehicle_no}</td>
-            <th>Driver</th>
-            <td>{invoice.driver_name}</td>
+            <td colSpan={2}>
+              <b>Vehicle</b>
+              <br />
+              <span>{invoice.vehicle_no}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Driver</b>
+              <br />
+              <span>{invoice.driver_name}</span>
+            </td>
           </tr>
 
           <tr>
-            <th>Cash</th>
-            <td>{invoice.cash}</td>
-            <th>Online</th>
-            <td>{invoice.online}</td>
+            <td colSpan={2}>
+              <b>Cash</b>
+              <br />
+              <span>{invoice.cash}</span>
+            </td>
+
+            <td colSpan={2}>
+              <b>Broker</b>
+              <br />
+              <span>{invoice.online}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
           </tr>
 
           <tr>
-            <th colSpan={2}>Total Advance</th>
-            <td colSpan={2}>{invoice.cash + invoice.online}</td>
+            <td colSpan={4}>
+              <b>Total Advance</b>
+              <br />
+              <span>{invoice.cash + invoice.online}</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
           </tr>
         </tbody>
       </table>
