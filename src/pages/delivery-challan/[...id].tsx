@@ -7,7 +7,7 @@ import Head from "next/head";
 import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
 
-export default function CreditSlip() {
+export default function DeliveryChallan() {
   const router = useRouter();
   const componentRef = useRef(null);
 
@@ -70,13 +70,10 @@ export default function CreditSlip() {
             </td>
           </tr>
           <tr>
-            <th colSpan={4}>Credit Slip</th>
+            <th colSpan={4}>Delivery Challan</th>
           </tr>
           <tr>
             <td colSpan={4}>Contact: 0317825800 </td>
-          </tr>
-          <tr>
-            <td colSpan={4}>0317825900</td>
           </tr>
           <tr>
             <td colSpan={2}>
@@ -190,19 +187,7 @@ export default function CreditSlip() {
             </td>
           </tr>
 
-          <tr>
-            <td colSpan={2}>
-              <b>Balance</b>
-              <br />
-              <span>{((invoice.todays_rate + invoice.add_less)*(invoice.second_weight - invoice.first_weight))-(invoice.cash + invoice.online)}</span>
-            </td>
-
-            <td colSpan={2}>
-              <b>Commission</b>
-              <br />
-              <span>{invoice.commission}</span>
-            </td>
-          </tr>
+        
           <tr>
             <td>&nbsp;</td>
           </tr>

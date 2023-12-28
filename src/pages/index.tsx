@@ -810,9 +810,9 @@ export default function Home({ sheds, invoices, brokers }: PropTypes) {
         <Link
           target="_blank"
           className="btn info-btn"
-          href={`/credit-slip/${rowid}`}
+          href={`/delivery-challan/${rowid}`}
         >
-          Credit Slip Print
+          Delivery Challan Print
         </Link>
       </section>}
 
